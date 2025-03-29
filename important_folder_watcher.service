@@ -1,0 +1,14 @@
+[Unit]
+Description=Important Folder Watcher Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/bin/important_folder_watcher.py
+Restart=always
+RestartSec=60
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

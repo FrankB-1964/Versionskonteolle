@@ -1,0 +1,74 @@
+Schritt 1
+Im Ordner, wo sich die heruntergeladenen Dateien befinden, ein Terminal offnen
+die Anweisungen aus install.md ausführen
+
+Schritt 2
+sudo nano /etc/systemd/system/important_folder_watcher.service
+Den Inhalt von important_folder_watcher.service einfügen, speichern und beendeb
+
+Schritt 3
+sudo systemctl daemon-reload
+sudo systemctl restart important_folder_watcher.service
+
+Ds sollte alles sein, um den Service zum Laufen zu bringen
+
+
+
+
+Weiteres
+
+Konfiguration
+Die Standardkonfiguration kann durch Ändern der Variablen am Anfang der Python-Datei angepasst werden:
+
+WATCH_INTERVAL: Interval in Sekunden zwischen den Prüfungen (Standard: 60)
+IMPORTANT_FOLDER_NAMES: Liste der zu überwachenden Ordnernamen (case-insensitive)
+VERSION_FOLDER: Name des Versionen-Unterordners
+STOP_FILE: Name der Datei, die die Überwachung stoppt
+
+Testen, wenn etwas nicht funtioniert
+Befehle zum Testen befinden sich im testen.md
+
+Logbuch
+Das Log wird unter /var/log/important_folder_watcher.log geschrieben. Sie können die Log-Level in der Python-Datei anpassen.
+
+Log rotate
+sudo nano /etc/logrotate.d/important_folder_watcher
+einfüegen und anpassen
+
+/var/log/important_folder_watcher.log {
+    daily
+    missingok
+    rotate 7
+    compress
+    delaycompress
+    notifempty
+    create 644 root root
+    sharedscripts
+    postrotate
+        systemctl kill -s HUP important_folder_watcher.service >/dev/null 2>&1 || true
+    endscript
+}
+
+Bei Vedarf Log leeren
+sudo truncate -s 0 /var/log/important_folder_watcher.log
+
+Deinstallation
+Stoppen und deaktivieren Sie den Service:
+
+sudo systemctl stop important_folder_watcher.service
+sudo systemctl disable important_folder_watcher.service
+
+sudo rm /etc/systemd/system/important_folder_watcher.service
+sudo rm /usr/local/bin/important_folder_watcher.py
+sudo rm -r /var/lib/important_folder_watcher
+
+Bearbeiten des py Scripts
+sudo systemctl stop important_folder_watcher.service
+sudo systemctl disable important_folder_watcher.service
+Bearbeiten sie die py Datei
+Weiter mit Schritt 1
+
+Status prüfen
+sudo systemctl status important_folder_watcher.service
+journalctl -u important_folder_watcher.service -f
+
